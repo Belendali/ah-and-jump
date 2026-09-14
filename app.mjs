@@ -127,7 +127,7 @@ function updateVoice(now){
 }
 function drawRope(phase,base,jumpY,fall=0){
  const hy=BODIES[bodyIdx].hy,hx=BODIES[bodyIdx].hx;const handY=base+hy-jumpY;const radius=-hy+jumpY;ctx.save();ctx.beginPath();
- for(let i=0;i<=70;i++){const u=i/70;const x=240-Math.cos(u*Math.PI)*hx;let y=handY+Math.cos(phase)*radius*Math.sin(u*Math.PI)+Math.sin(phase)*23*Math.sin(u*Math.PI);if(fall>0)y+=Math.sin(u*Math.PI*3)*Math.min(fall,1)*14; i?ctx.lineTo(x,y):ctx.moveTo(x,y)}
+ for(let i=0;i<=70;i++){const u=i/70;const x=240-Math.cos(u*Math.PI)*hx;let y=handY+Math.cos(phase)*radius*Math.sin(u*Math.PI)-Math.sin(phase)*28*Math.sin(u*Math.PI);if(fall>0)y+=Math.sin(u*Math.PI*3)*Math.min(fall,1)*14; i?ctx.lineTo(x,y):ctx.moveTo(x,y)}
  ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#263c47';ctx.lineWidth=7;ctx.stroke();ctx.strokeStyle=fall?'#ff777d':'#ee9cd2';ctx.lineWidth=4.8;ctx.stroke();ctx.strokeStyle='#ffd9f2';ctx.lineWidth=1.2;ctx.stroke();ctx.restore();
 }
 function drawAvatar(base,height,rotation=0,sx=1,sy=1,offsetX=0){
@@ -188,9 +188,10 @@ function drawScene(dt){
  ctx.save();ctx.translate(240+(fall?20:0),base+2);ctx.scale(fall?1.5:1,1);ctx.beginPath();ctx.ellipse(0,0,75-height*.25,12-height*.015,0,0,TAU);ctx.fillStyle='#183e3c32';ctx.fill();ctx.restore();
  const phase=mode==='playing'?stateEngine.phase:mode==='countdown'?Math.PI*.9:fall?TAU:animTime*1.8;
  const poseRope=()=>{ctx.save();ctx.translate(240+offsetX,base-height);ctx.rotate(rotation);ctx.scale(sx,sy);ctx.translate(-240,-base+height);drawRope(phase,base,height);ctx.restore()};
- if(!fall&&Math.sin(phase)<=0)poseRope();
+ // Phase 0 is under the feet, π is over the head. Rising half (sin>0) goes behind the body, falling half in front: back-to-front swing.
+ if(!fall&&Math.sin(phase)>=0)poseRope();
  drawAvatar(drawBase,height,rotation,sx,sy,offsetX);
- if(!fall&&Math.sin(phase)>0)poseRope();
+ if(!fall&&Math.sin(phase)<0)poseRope();
  if(fall){
   ctx.save();ctx.strokeStyle='#273f42';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(160,base+5);ctx.bezierCurveTo(235,base+33,359,base-8,364,base-39);ctx.bezierCurveTo(356,base-60,324,base-27,355,base-20);ctx.stroke();ctx.strokeStyle='#ee9cd2';ctx.lineWidth=4.5;ctx.stroke();ctx.restore();
   if(fallAge>.72){for(let i=0;i<4;i++){const a=animTime*2.6+i*Math.PI/2;star(89+Math.cos(a)*47,base-37+Math.sin(a)*16,9,i+animTime)}if(fallAge<1.5){ctx.save();ctx.globalAlpha=Math.max(0,1-(fallAge-.72)/.78);ctx.font='italic 900 55px Impact';ctx.textAlign='center';ctx.lineWidth=5;ctx.strokeStyle='#203a33';ctx.strokeText('BONK!',210,base-82);ctx.fillStyle='#ffe052';ctx.fillText('BONK!',210,base-82);ctx.restore();}}
