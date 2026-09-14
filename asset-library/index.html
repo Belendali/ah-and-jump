@@ -59,18 +59,30 @@
 
   <section id="characters">
     <h2>Character</h2>
-    <p class="sub">One body, the player's own face on top.</p>
+    <p class="sub">Three outfits on one template, the player's own face on top. A random one is picked every round.</p>
     <div class="grid">
       <div class="card">
-        <div class="pv"><img src="./files/body.png" alt="Body" /></div>
-        <b>body.png</b>
-        <p>1254 × 1254, transparent. Headless body holding both rope handles. The face is cropped live from the camera and drawn at the neck, 142 px tall on an 840 px canvas, with a 16 px cream outline (<code>#fffdf2</code>).</p>
-        <div class="row"><a href="./files/body.png" download>PNG ↓</a></div>
+        <div class="pv"><img src="./files/body-1.png" alt="Body 1" /></div>
+        <b>body-1.png</b>
+        <p>1254 × 1254, transparent. Pink cropped jacket and wide blue jeans. The face is cropped live from the camera and drawn at the neck, 142 px tall on an 840 px canvas, with a 16 px cream outline (<code>#fffdf2</code>).</p>
+        <div class="row"><a href="./files/body-1.png" download>PNG ↓</a></div>
+      </div>
+      <div class="card">
+        <div class="pv"><img src="./files/body-2.png" alt="Body 2" /></div>
+        <b>body-2.png</b>
+        <p>Orange tee and purple skirt. Same neck position; rope handles sit a little closer in, so the rope anchors per body.</p>
+        <div class="row"><a href="./files/body-2.png" download>PNG ↓</a></div>
+      </div>
+      <div class="card">
+        <div class="pv"><img src="./files/body-3.png" alt="Body 3" /></div>
+        <b>body-3.png</b>
+        <p>White jacket over red shorts with hi-tops. Legs split at the hips in code for the running pose.</p>
+        <div class="row"><a href="./files/body-3.png" download>PNG ↓</a></div>
       </div>
       <div class="card">
         <div class="faces" style="flex-direction:column">
-          <div class="face" style="padding:0"><span>😎</span><b>Idle &amp; jumping</b><p>Fallback when no face is captured.</p></div>
-          <div class="face" style="padding:0;margin-top:14px"><span>😵‍💫</span><b>Fall &amp; result</b><p>Shown on a faceplant.</p></div>
+          <div class="face" style="padding:0"><span><svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><circle cx="32" cy="32" r="24" fill="rgba(255,255,255,.25)"/><circle cx="23" cy="27" r="2.4" fill="#fff" stroke="none"/><circle cx="41" cy="27" r="2.4" fill="#fff" stroke="none"/><path d="M21 38c3 5 19 5 22 0"/></svg></span><b>Idle &amp; jumping</b><p>Drawn in code: a blurred disc with a white line smiley, meaning "your face goes here".</p></div>
+          <div class="face" style="padding:0;margin-top:14px"><span><svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><circle cx="32" cy="32" r="24" fill="rgba(255,255,255,.25)"/><path d="M19 23l8 8M27 23l-8 8M37 23l8 8M45 23l-8 8"/><circle cx="32" cy="42" r="4"/></svg></span><b>Fall &amp; result</b><p>Same disc with crossed eyes on a faceplant.</p></div>
         </div>
       </div>
     </div>

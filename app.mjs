@@ -34,6 +34,9 @@ let countdownAge=0,lastCount='',animTime=0,fallAge=0,winAge=0,lastFrame=performa
 let lastVideoTime=-1,lastDetection=0,lastFaceAt=0,faceStableAt=0,setupStarted=0,cameraAttempt=0;
 let paused=false,hiddenPause=false,loadingModel=null,roundTimer=0;
 let artReady=false,court,body,particles=[],detectionErrors=0;
+// Three outfits on one template: same neck, slightly different rope-handle spots (avatar space, 290 px body).
+const BODIES=[{src:'./assets/body-1.png',hx:86,hy:-178},{src:'./assets/body-2.png',hx:77,hy:-177},{src:'./assets/body-3.png',hx:89,hy:-186}];let bodyIdx=0;
+function pickBody(){if(!BODIES[0].img)return;let i=Math.floor(Math.random()*BODIES.length);if(BODIES.length>1&&i===bodyIdx)i=(i+1)%BODIES.length;bodyIdx=i;body=BODIES[i].img}
 let analyser=null,micSource=null,micSink=null,micSamples=null,noiseLevels=[],micStarted=0,micCalibrated=false;
 const stateEngine=new GameEngine(onGameEvent);
 let poseKind=0,currentPose=null;
@@ -55,7 +58,7 @@ function onGameEvent(event){
 }
 function snapshot(){return{mode,control:practice?'space_or_tap':'voice',timeSurvived:Number(stateEngine.time.toFixed(2)),jumps:stateEngine.jumps,paused,faceCaptured:!!face}}
 function launchCountdown(){
- clearTimeout(roundTimer);paused=false;hiddenPause=false;show('pauseLayer',false);stateEngine.reset();voiceGate.reset();countdownAge=0;lastCount='';particles=[];setMode('countdown');$('time').innerHTML=DURATION.toFixed(1)+'<span>s</span>';$('score').textContent='0';
+ clearTimeout(roundTimer);paused=false;hiddenPause=false;show('pauseLayer',false);stateEngine.reset();voiceGate.reset();countdownAge=0;lastCount='';particles=[];pickBody();setMode('countdown');$('time').innerHTML=DURATION.toFixed(1)+'<span>s</span>';$('score').textContent='0';
 }
 function jump(){if(mode!=='playing'||paused)return false;return stateEngine.jump()}
 function finish(){const won=stateEngine.state==='won';setMode('result');$('resultPanel').classList.toggle('win',won);$('resultKicker').textContent=won?'FIFTEEN SECONDS. ALL YOU.':'THE ROPE WON THIS ROUND';$('resultTitle').textContent=won?'YOU DID IT!':'FACEPLANT!';$('resultMessage').textContent=won?'Flawless footwork. Take a victory bounce.':stateEngine.time<4?'The rope said “nice to meet your face.”':'Great face. Questionable footwork.';$('resultTime').textContent=stateEngine.time.toFixed(1)+'s';$('resultJumps').textContent=stateEngine.jumps;$('replay').textContent=won?'Do it again':'One more round';$('retake').textContent=practice?'Play with my face':'Retake selfie';}
@@ -123,7 +126,7 @@ function updateVoice(now){
  if(onset&&mode==='playing'&&!paused)jump();
 }
 function drawRope(phase,base,jumpY,fall=0){
- const handY=base-164-jumpY;const hx=106;const radius=164+jumpY;ctx.save();ctx.beginPath();
+ const hy=BODIES[bodyIdx].hy,hx=BODIES[bodyIdx].hx;const handY=base+hy-jumpY;const radius=-hy+jumpY;ctx.save();ctx.beginPath();
  for(let i=0;i<=70;i++){const u=i/70;const x=240-Math.cos(u*Math.PI)*hx;let y=handY+Math.cos(phase)*radius*Math.sin(u*Math.PI)+Math.sin(phase)*23*Math.sin(u*Math.PI);if(fall>0)y+=Math.sin(u*Math.PI*3)*Math.min(fall,1)*14; i?ctx.lineTo(x,y):ctx.moveTo(x,y)}
  ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#263c47';ctx.lineWidth=7;ctx.stroke();ctx.strokeStyle=fall?'#ff777d':'#ee9cd2';ctx.lineWidth=4.8;ctx.stroke();ctx.strokeStyle='#ffd9f2';ctx.lineWidth=1.2;ctx.stroke();ctx.restore();
 }
@@ -142,7 +145,20 @@ function drawAvatar(base,height,rotation=0,sx=1,sy=1,offsetX=0){
   }
  }else ctx.drawImage(body,-145,-282,290,290);
  ctx.save();ctx.translate(0,-290);ctx.rotate(Math.sin(animTime*3)*.028+(currentPose?.head||0));
- if(face){const fh=142,fw=Math.min(143,fh*face.width/face.height);ctx.drawImage(face,-fw/2,-fh+33,fw,fh)}else{ctx.font='116px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(mode==='falling'||(mode==='result'&&stateEngine.state==='fallen')?'😵‍💫':'😎',0,-35)}ctx.restore();ctx.restore();
+ if(face){const fh=142,fw=Math.min(143,fh*face.width/face.height);ctx.drawImage(face,-fw/2,-fh+33,fw,fh)}else drawPlaceholderFace(mode==='falling'||(mode==='result'&&stateEngine.state==='fallen'));ctx.restore();ctx.restore();
+}
+function drawPlaceholderFace(dizzy){
+ // A soft blurred disc where the selfie will go, with a simple white line smiley on top.
+ const cy=-16,r=58;ctx.save();
+ const g=ctx.createRadialGradient(0,cy,r*.35,0,cy,r*1.25);g.addColorStop(0,'rgba(255,255,255,.55)');g.addColorStop(.7,'rgba(255,255,255,.28)');g.addColorStop(1,'rgba(255,255,255,0)');
+ ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,cy,r*1.25,0,TAU);ctx.fill();
+ ctx.strokeStyle='#fff';ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=4;
+ ctx.beginPath();ctx.arc(0,cy,r*.78,0,TAU);ctx.stroke();
+ if(dizzy){for(const s of[-1,1]){const ex=s*18,ey=cy-10;ctx.beginPath();ctx.moveTo(ex-7,ey-7);ctx.lineTo(ex+7,ey+7);ctx.moveTo(ex+7,ey-7);ctx.lineTo(ex-7,ey+7);ctx.stroke()}
+  ctx.beginPath();ctx.arc(0,cy+20,7,0,TAU);ctx.stroke()}
+ else{ctx.fillStyle='#fff';for(const s of[-1,1]){ctx.beginPath();ctx.arc(s*18,cy-10,4.5,0,TAU);ctx.fill()}
+  ctx.beginPath();ctx.arc(0,cy+2,24,Math.PI*.15,Math.PI*.85);ctx.stroke()}
+ ctx.restore();
 }
 function star(x,y,r,rotation,color='#ffe052'){ctx.save();ctx.translate(x,y);ctx.rotate(rotation);ctx.beginPath();for(let i=0;i<10;i++){const a=i*Math.PI/5-Math.PI/2,s=i%2?r*.46:r;i?ctx.lineTo(Math.cos(a)*s,Math.sin(a)*s):ctx.moveTo(Math.cos(a)*s,Math.sin(a)*s)}ctx.closePath();ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#234436';ctx.lineWidth=2;ctx.stroke();ctx.restore()}
 function drawScene(dt){
@@ -214,7 +230,7 @@ function makeSprite(img){
  g.putImageData(pixels,0,0);return c;
 }
 function loadImage(path){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Could not load '+path));img.src=path})}
-const assetsReady=Promise.all([loadImage('./assets/court.png'),loadImage('./assets/body.png')]).then(([a,b])=>{court=a;body=makeSprite(b);artReady=true;return true}).catch(error=>{setMode('setup');cameraError('The court couldn’t load','Check your connection and reload the page.');$('retryCamera').textContent='Reload game';$('retryCamera').onclick=()=>location.reload();throw error});
+const assetsReady=Promise.all([loadImage('./assets/court.png'),...BODIES.map(b=>loadImage(b.src))]).then(([a,...bs])=>{court=a;bs.forEach((img,i)=>{BODIES[i].img=makeSprite(img)});bodyIdx=Math.floor(Math.random()*BODIES.length);body=BODIES[bodyIdx].img;artReady=true;return true}).catch(error=>{setMode('setup');cameraError('The court couldn’t load','Check your connection and reload the page.');$('retryCamera').textContent='Reload game';$('retryCamera').onclick=()=>location.reload();throw error});
 assetsReady.catch(()=>{});
 $('start').onclick=()=>void startCamera();$('practice').onclick=()=>void startPractice();$('cancelSetup').onclick=()=>void startPractice();$('retryCamera').onclick=()=>void startCamera();
 $('jump').onclick=jump;
