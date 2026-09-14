@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#142c29"><meta name="description" content="Say ah to jump. Keep your selfie character on its feet for 15 seconds."><title>Ah & Jump</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23ffe052'/%3E%3Ctext x='20' y='29' text-anchor='middle' font-size='30'%3E!%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="./style.css?v=mic2">
+<link rel="stylesheet" href="./style.css?v=plain">
 </head>
 <body><main class="shell" id="voice-app"><section class="phone" id="phone" aria-label="Ah and Jump game">
 <div class="camera-tile" id="cameraTile" hidden><video id="camera" autoplay playsinline muted></video></div>
@@ -16,5 +16,5 @@
 <div class="setup-panel" id="setupPanel" hidden><div class="spinner" id="spinner"></div><h2 id="setupTitle">Camera + microphone</h2><p id="setupText">Hold still and stay quiet for a moment.</p><button class="primary" id="setupMic" hidden>Enable microphone</button><button class="primary" id="retryCamera" hidden>Try again</button><button class="text-button" id="cancelSetup">Try tap practice</button></div>
 <div class="mic-check" id="micCheck" hidden><h2>Say “ah” to start.</h2><p>One short sound. No need to shout.</p><div class="mic-meter" aria-label="Microphone level"><div id="micLevel"></div></div><button class="primary" id="enableMic" hidden>Enable microphone</button><button class="text-button" id="retryMic">Mic not responding? Try again</button></div>
 <div class="play-controls" id="playControls" hidden><button class="jump-button" id="jump">Tap to jump · Space</button></div>
-<div class="result-panel" id="resultPanel" hidden role="status"><span class="result-kicker" id="resultKicker"></span><h2 id="resultTitle">FACEPLANT!</h2><p id="resultMessage"></p><div class="result-stats"><div><strong id="resultTime">0.0s</strong><span>TIME</span></div><div><strong id="resultJumps">0</strong><span>JUMPS</span></div></div><button class="primary" id="replay">Try again</button><button class="text-button" id="retake">Retake selfie</button></div>
-</section></main><script type="module" src="./app.mjs?v=rope-fwd"></script></body></html>
+<div class="result-panel" id="resultPanel" hidden role="status"><h2 id="resultTitle">Congrats</h2><button class="replay" id="replay">Replay</button></div>
+</section></main><script type="module" src="./app.mjs?v=plain-result"></script></body></html>

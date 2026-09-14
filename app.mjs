@@ -61,7 +61,7 @@ function launchCountdown(){
  clearTimeout(roundTimer);paused=false;hiddenPause=false;show('pauseLayer',false);stateEngine.reset();voiceGate.reset();countdownAge=0;lastCount='';particles=[];pickBody();setMode('countdown');$('time').innerHTML=DURATION.toFixed(1)+'<span>s</span>';$('score').textContent='0';
 }
 function jump(){if(mode!=='playing'||paused)return false;return stateEngine.jump()}
-function finish(){const won=stateEngine.state==='won';setMode('result');$('resultPanel').classList.toggle('win',won);$('resultKicker').textContent=won?'FIFTEEN SECONDS. ALL YOU.':'THE ROPE WON THIS ROUND';$('resultTitle').textContent=won?'YOU DID IT!':'FACEPLANT!';$('resultMessage').textContent=won?'Flawless footwork. Take a victory bounce.':stateEngine.time<4?'The rope said “nice to meet your face.”':'Great face. Questionable footwork.';$('resultTime').textContent=stateEngine.time.toFixed(1)+'s';$('resultJumps').textContent=stateEngine.jumps;$('replay').textContent=won?'Do it again':'One more round';$('retake').textContent=practice?'Play with my face':'Retake selfie';}
+function finish(){const won=stateEngine.state==='won';setMode('result');$('resultPanel').classList.toggle('win',won);$('resultTitle').textContent=won?'Congrats':'You lose';}
 function stopCamera(){cameraAttempt++;micSource?.disconnect();analyser?.disconnect();micSink?.disconnect();micSink=null;micSource=null;analyser=null;micSamples=null;micCalibrated=false;noiseLevels=[];stream?.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;show('cameraTile',false);lastVideoTime=-1;faceStableAt=0;}
 async function startPractice(){activateAudio();stopCamera();practice=true;face=null;await assetsReady;launchCountdown()}
 async function getModel(){if(landmarker)return landmarker;if(loadingModel)return loadingModel;loadingModel=(async()=>{const {FaceLandmarker,FilesetResolver}=await import('./vendor/vision_bundle.mjs');const fileset=await FilesetResolver.forVisionTasks('./vendor/wasm');const options={baseOptions:{modelAssetPath:'./vendor/face_landmarker.task',delegate:'GPU'},runningMode:'VIDEO',numFaces:1,outputFaceBlendshapes:true,minFaceDetectionConfidence:.5,minFacePresenceConfidence:.5,minTrackingConfidence:.5};try{return await FaceLandmarker.createFromOptions(fileset,options)}catch{options.baseOptions.delegate='CPU';return await FaceLandmarker.createFromOptions(fileset,options)}})();try{landmarker=await loadingModel;return landmarker}finally{loadingModel=null}}
@@ -237,7 +237,7 @@ $('start').onclick=()=>void startCamera();$('practice').onclick=()=>void startPr
 $('jump').onclick=jump;
 $('enableMic').onclick=$('setupMic').onclick=()=>{activateAudio();voiceGate.reset()};
 $('retryMic').onclick=()=>void startCamera();
-$('replay').onclick=()=>{activateAudio();launchCountdown()};$('retake').onclick=()=>void startCamera();
+$('replay').onclick=()=>{activateAudio();launchCountdown()};
 $('resume').onclick=async()=>{activateAudio();if(!practice&&(!stream?.getAudioTracks().some(t=>t.readyState==='live')||detectionErrors>6)){void startCamera();return}try{await audioContext?.resume();if(!practice&&(audioContext?.state!=='running'||stream.getAudioTracks()[0].muted))return;hiddenPause=false;paused=false;show('pauseLayer',false);voiceGate.reset()}catch{}};
 window.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat&&practice&&mode==='playing'&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();jump()}});
 canvas.addEventListener('pointerdown',()=>{if(practice)jump()});
