@@ -86,6 +86,25 @@
         </div>
       </div>
     </div>
+    <h2 style="margin-top:28px">Hair</h2>
+    <p class="sub">Two hairstyles on the same head template, drawn behind the face. Each is split into a still cap and swinging parts that pivot where they leave the head. A spring driven by the jump's vertical speed swings them: rising pulls them down, falling flings them up.</p>
+    <div class="grid">
+      <div class="card">
+        <div class="pv"><img src="./files/hair/braids-cap.png" alt="Braids cap" /></div>
+        <b>braids-cap.png · braid-left.png · braid-right.png</b>
+        <p>Body 1 (pink). Cap stays put, the two braids pivot at ear level (±0.32 rad up, −0.6 rad down) and hang a little at rest.</p>
+        <div class="row"><a href="./files/hair/braids-cap.png" download>Cap ↓</a><a href="./files/hair/braid-left.png" download>Left ↓</a><a href="./files/hair/braid-right.png" download>Right ↓</a></div>
+      </div>
+      <div class="card">
+        <div class="pv"><img src="./files/hair/pony-tail.png" alt="Ponytail" /></div>
+        <b>pony-cap.png · pony-tail.png</b>
+        <p>Body 2 (orange). Bangs stay put, the tail pivots at the crown and swings on the same spring, a little softer.</p>
+        <div class="row"><a href="./files/hair/pony-cap.png" download>Cap ↓</a><a href="./files/hair/pony-tail.png" download>Tail ↓</a></div>
+      </div>
+      <div class="card">
+        <p style="margin:0"><b>Placement</b><br>All pieces share one 640 px frame (source 1254 px, scale 0.36 onto the 142 px face). Head centre at (627, 330) in the source lands 46 px above the neck. Braid pivots (425, 370) and (830, 370); ponytail pivot (600, 110).</p>
+      </div>
+    </div>
   </section>
 
   <section id="background">
@@ -133,9 +152,10 @@
       <tr><th>Voice input</th><td>Volume-onset detection, not speech recognition. Any short sound works. Threshold auto-calibrates from the room's noise floor, clamped between 0.004 and 0.08.</td></tr>
       <tr><th>Timing</th><td>Rearms after 130 ms of quiet. At least 250 ms between two jumps.</td></tr>
       <tr><th>Poses</th><td>Four jump poses (tuck, twist, squash, spin), picked at random, never the same twice in a row. Height and airtime stay the same.</td></tr>
-      <tr><th>Sound</th><td>Synthesized with WebAudio: jump, land, countdown, go, fall, win. No audio files.</td></tr>
+      <tr><th>Sound</th><td>Jump, land, countdown, go, fall and win are synthesized with WebAudio. The result stingers are shared with the salon game: <a href="./files/audio/ending-great.mp3" download>ending-great.mp3</a> on a win, <a href="./files/audio/ending-bad.mp3" download>ending-bad.mp3</a> on a faceplant.</td></tr>
+      <tr><th>Music</th><td>Synthesized bed at 126 bpm, four bars of F / C / Dm / Bb: soft kick, hats, clap, bouncy bass and plucked stabs. Runs from the countdown to the result, fades on a fall. Kept quiet (9% with the mic, 16% in practice) so it sits under the voice instead of over it.</td></tr>
       <tr><th>Face capture</th><td>MediaPipe Face Landmarker, on device. The face oval is clipped from the selfie once, then reused as a sprite.</td></tr>
-      <tr><th>Tap practice</th><td>No camera or mic. Tap to jump, emoji face.</td></tr>
+      <tr><th>Tap practice</th><td>No camera or mic. Tap to jump, line-smiley placeholder face.</td></tr>
     </table>
   </section>
 

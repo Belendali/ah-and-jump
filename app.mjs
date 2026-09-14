@@ -35,7 +35,19 @@ let lastVideoTime=-1,lastDetection=0,lastFaceAt=0,faceStableAt=0,setupStarted=0,
 let paused=false,hiddenPause=false,loadingModel=null,roundTimer=0;
 let artReady=false,court,body,particles=[],detectionErrors=0;
 // Three outfits on one template: same neck, slightly different rope-handle spots (avatar space, 290 px body).
-const BODIES=[{src:'./assets/body-1.png',hx:86,hy:-178},{src:'./assets/body-2.png',hx:77,hy:-177},{src:'./assets/body-3.png',hx:89,hy:-186}];let bodyIdx=0;
+const BODIES=[{src:'./assets/body-1.png',hx:86,hy:-178,hair:'braids'},{src:'./assets/body-2.png',hx:77,hy:-177,hair:'pony'},{src:'./assets/body-3.png',hx:89,hy:-186}];let bodyIdx=0;
+// Hair: a static cap behind the face plus swinging parts, each pivoting where it leaves the head. Coordinates are in the 1254-px source frame; HAIR_S maps that onto the 142-px face.
+const HAIR_S=.36,HAIR_CX=627,HAIR_CY=330,HAIR_HEAD_Y=-46;
+const HAIR={braids:{cap:'./assets/hair/braids-cap.png',parts:[{src:'./assets/hair/braid-left.png',px:425,py:370,dir:1,rest:-.22},{src:'./assets/hair/braid-right.png',px:830,py:370,dir:-1,rest:-.22}]},
+            pony:{cap:'./assets/hair/pony-cap.png',parts:[{src:'./assets/hair/pony-tail.png',px:600,py:110,dir:-.8}]}};
+let hairSwing=0,hairVel=0,prevHeight=0;
+function hairImages(){const out=[];for(const h of Object.values(HAIR)){out.push(h);out.push(...h.parts)}return out}
+function drawHair(){
+ const h=HAIR[BODIES[bodyIdx].hair];if(!h||!h.img)return;
+ const size=1254*HAIR_S,ox=-HAIR_CX*HAIR_S,oy=HAIR_HEAD_Y-HAIR_CY*HAIR_S;
+ for(const part of h.parts){if(!part.img)continue;const px=ox+part.px*HAIR_S,py=oy+part.py*HAIR_S;ctx.save();ctx.translate(px,py);ctx.rotate(Math.max(-.6,Math.min(.32,hairSwing+(part.rest||0)))*part.dir);ctx.drawImage(part.img,ox-px,oy-py,size,size);ctx.restore()}
+ ctx.drawImage(h.img,ox,oy,size,size);
+}
 function pickBody(){if(!BODIES[0].img)return;let i=Math.floor(Math.random()*BODIES.length);if(BODIES.length>1&&i===bodyIdx)i=(i+1)%BODIES.length;bodyIdx=i;body=BODIES[i].img}
 let analyser=null,micSource=null,micSink=null,micSamples=null,noiseLevels=[],micStarted=0,micCalibrated=false;
 const stateEngine=new GameEngine(onGameEvent);
@@ -49,11 +61,33 @@ function sound(type){
  const notes={jump:[[430,810,.085]],land:[[145,65,.075]],clear:[[720,900,.07]],count:[[540,540,.10]],go:[[660,1100,.2]],snap:[[1900,100,.055]],fall:[[420,80,.48],[120,45,.23,.52]],bounce:[[150,65,.13]],win:[[523,523,.12],[659,659,.12,.13],[784,784,.12,.26],[1047,1047,.4,.4]]}[type]||[];
  for(const [a,b,d,offset=0] of notes){const osc=ac.createOscillator(),gain=ac.createGain();osc.type=type==='fall'?'sawtooth':'sine';osc.frequency.setValueAtTime(a,t+offset);osc.frequency.exponentialRampToValueAtTime(b,t+offset+d);gain.gain.setValueAtTime(.0001,t+offset);gain.gain.exponentialRampToValueAtTime(type==='jump'?.045:type==='land'?.055:type==='fall'?.055:.1,t+offset+.01);gain.gain.exponentialRampToValueAtTime(.0001,t+offset+d);osc.connect(gain).connect(ac.destination);osc.start(t+offset);osc.stop(t+offset+d+.025)}
 }
-function activateAudio(){try{if(!audioContext||audioContext.state==='closed')audioContext=new(window.AudioContext||window.webkitAudioContext)();void audioContext.resume().catch(()=>{})}catch{}}
+function activateAudio(){try{if(!audioContext||audioContext.state==='closed')audioContext=new(window.AudioContext||window.webkitAudioContext)();void audioContext.resume().catch(()=>{});loadStingers()}catch{}}
+// Result stingers shared with the salon game, so the whole set ends on the same note.
+const STINGER_SRC={great:'./assets/audio/ending-great.mp3',bad:'./assets/audio/ending-bad.mp3'},stingerBuf={};
+function loadStingers(){for(const [k,src] of Object.entries(STINGER_SRC)){if(stingerBuf[k])continue;stingerBuf[k]='loading';fetch(src).then(r=>r.arrayBuffer()).then(b=>audioContext.decodeAudioData(b)).then(buf=>{stingerBuf[k]=buf}).catch(()=>{delete stingerBuf[k]})}}
+function stinger(k,gain=1,delay=0){const buf=stingerBuf[k];if(muted||!audioContext||!buf||buf==='loading')return false;const s=audioContext.createBufferSource();s.buffer=buf;const g=audioContext.createGain();g.gain.value=gain;s.connect(g).connect(audioContext.destination);s.start(audioContext.currentTime+delay);return true}
+// Music bed: 126 bpm, four bars of F / C / Dm / Bb, kick + hats + clap + bass + plucks. Quiet on purpose: it sets a mood under the mic, not over it.
+const BPM=126,STEP=60/BPM/4,BASS=[87.31,65.41,73.42,58.27],CHORDS=[[349.23,440,523.25],[329.63,392,523.25],[293.66,349.23,440],[293.66,349.23,466.16]];
+const music={on:false,gain:null,next:0,step:0,timer:null,noise:null};
+function noiseBuffer(ac){if(music.noise)return music.noise;const b=ac.createBuffer(1,ac.sampleRate,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;music.noise=b;return b}
+function musicStart(){if(music.on||muted||!audioContext||audioContext.state!=='running')return;const ac=audioContext;music.on=true;music.gain=ac.createGain();music.gain.gain.setValueAtTime(.0001,ac.currentTime);music.gain.gain.exponentialRampToValueAtTime(practice?.16:.09,ac.currentTime+1);music.gain.connect(ac.destination);music.next=ac.currentTime+.05;music.step=0;music.timer=setInterval(musicTick,80);musicTick()}
+function musicStop(fade=.6){if(!music.on)return;music.on=false;clearInterval(music.timer);const g=music.gain,ac=audioContext;try{g.gain.cancelScheduledValues(ac.currentTime);g.gain.setValueAtTime(g.gain.value,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+fade)}catch{}setTimeout(()=>{try{g.disconnect()}catch{}},fade*1000+50)}
+function musicTick(){const ac=audioContext;if(!music.on||!ac)return;while(music.next<ac.currentTime+.3){musicStep(music.step,music.next);music.step++;music.next+=STEP}}
+function musicStep(i,t){
+ const ac=audioContext,out=music.gain,s=i%16,bar=Math.floor(i/16)%4;
+ const tone=(type,f0,f1,dur,vol,at=t)=>{const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(f0,at);if(f1!==f0)o.frequency.exponentialRampToValueAtTime(f1,at+dur*.6);g.gain.setValueAtTime(.0001,at);g.gain.exponentialRampToValueAtTime(vol,at+.008);g.gain.exponentialRampToValueAtTime(.0001,at+dur);o.connect(g).connect(out);o.start(at);o.stop(at+dur+.02)};
+ const hiss=(freq,q,dur,vol,type='highpass')=>{const src=ac.createBufferSource();src.buffer=noiseBuffer(ac);src.loop=true;const f=ac.createBiquadFilter();f.type=type;f.frequency.value=freq;f.Q.value=q;const g=ac.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+dur);src.connect(f).connect(g).connect(out);src.start(t);src.stop(t+dur+.02)};
+ if(s%4===0)tone('sine',130,48,.16,.7);                       // soft kick
+ hiss(7500,.7,s%4===2?.07:.035,s%4===2?.22:.12);              // hats, open on the off-beat
+ if(s===4||s===12)hiss(1900,1.2,.11,.28,'bandpass');           // clap
+ if([0,3,6,10,12,14].includes(s))tone('triangle',BASS[bar],BASS[bar],.2,.42);  // bouncy bass
+ if([2,6,9,13].includes(s))for(const f of CHORDS[bar])tone('triangle',f,f,.16,.07); // plucked chord stabs
+ if(s===8||s===15)tone('sine',CHORDS[bar][2]*2,CHORDS[bar][2]*2,.12,.05);      // sparkle
+}
 function onGameEvent(event){
  sound(event);
  if(event==='jump'){poseKind=nextPose(poseKind);for(let i=0;i<5;i++)particles.push({x:240+(Math.random()-.5)*60,y:GROUND,vx:(Math.random()-.5)*50,vy:-Math.random()*40,age:0,life:.4,color:'#fff9de',size:3});}
- if(event==='fall'){setMode('falling');fallAge=0;show('playControls',false);}
+ if(event==='fall'){setMode('falling');fallAge=0;show('playControls',false);musicStop(.25);}
  if(event==='win'){setMode('win');winAge=0;for(let i=0;i<90;i++)particles.push({x:Math.random()*W,y:-Math.random()*H*.8,vx:(Math.random()-.5)*150,vy:100+Math.random()*140,age:0,life:8,color:['#ffe052','#ff716f','#9b88ff','#fffdf0','#4ec9b0'][i%5],size:3+Math.random()*4});}
 }
 function snapshot(){return{mode,control:practice?'space_or_tap':'voice',timeSurvived:Number(stateEngine.time.toFixed(2)),jumps:stateEngine.jumps,paused,faceCaptured:!!face}}
@@ -61,7 +95,7 @@ function launchCountdown(){
  clearTimeout(roundTimer);paused=false;hiddenPause=false;show('pauseLayer',false);stateEngine.reset();voiceGate.reset();countdownAge=0;lastCount='';particles=[];pickBody();setMode('countdown');$('time').innerHTML=DURATION.toFixed(1)+'<span>s</span>';$('score').textContent='0';
 }
 function jump(){if(mode!=='playing'||paused)return false;return stateEngine.jump()}
-function finish(){const won=stateEngine.state==='won';setMode('result');$('resultPanel').classList.toggle('win',won);$('resultTitle').textContent=won?'Congrats':'You lose';}
+function finish(){const won=stateEngine.state==='won';setMode('result');$('resultPanel').classList.toggle('win',won);$('resultTitle').textContent=won?'Congrats':'You lose';musicStop(.4);stinger(won?'great':'bad',.9,.1);}
 function stopCamera(){cameraAttempt++;micSource?.disconnect();analyser?.disconnect();micSink?.disconnect();micSink=null;micSource=null;analyser=null;micSamples=null;micCalibrated=false;noiseLevels=[];stream?.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;show('cameraTile',false);lastVideoTime=-1;faceStableAt=0;}
 async function startPractice(){activateAudio();stopCamera();practice=true;face=null;await assetsReady;launchCountdown()}
 async function getModel(){if(landmarker)return landmarker;if(loadingModel)return loadingModel;loadingModel=(async()=>{const {FaceLandmarker,FilesetResolver}=await import('./vendor/vision_bundle.mjs');const fileset=await FilesetResolver.forVisionTasks('./vendor/wasm');const options={baseOptions:{modelAssetPath:'./vendor/face_landmarker.task',delegate:'GPU'},runningMode:'VIDEO',numFaces:1,outputFaceBlendshapes:true,minFaceDetectionConfidence:.5,minFacePresenceConfidence:.5,minTrackingConfidence:.5};try{return await FaceLandmarker.createFromOptions(fileset,options)}catch{options.baseOptions.delegate='CPU';return await FaceLandmarker.createFromOptions(fileset,options)}})();try{landmarker=await loadingModel;return landmarker}finally{loadingModel=null}}
@@ -144,7 +178,7 @@ function drawAvatar(base,height,rotation=0,sx=1,sy=1,offsetX=0){
    ctx.restore();
   }
  }else ctx.drawImage(body,-145,-282,290,290);
- ctx.save();ctx.translate(0,-290);ctx.rotate(Math.sin(animTime*3)*.028+(currentPose?.head||0));
+ ctx.save();ctx.translate(0,-290);ctx.rotate(Math.sin(animTime*3)*.028+(currentPose?.head||0));drawHair();
  if(face){const fh=142,fw=Math.min(143,fh*face.width/face.height);ctx.drawImage(face,-fw/2,-fh+33,fw,fh)}else drawPlaceholderFace(mode==='falling'||(mode==='result'&&stateEngine.state==='fallen'));ctx.restore();ctx.restore();
 }
 function drawPlaceholderFace(dizzy){
@@ -185,6 +219,7 @@ function drawScene(dt){
   currentPose=jumpPose(poseKind,(stateEngine.time-stateEngine.jumpAt)/(2*JUMP_VELOCITY/GRAVITY));
   ({rotation,sx,sy,offsetX}=currentPose);
  }
+ {const vel=dt>0?(height-prevHeight)/dt:0;prevHeight=height;const target=Math.max(-.42,Math.min(.42,-vel/1300));hairVel+=((target-hairSwing)*170-hairVel*9)*dt;hairSwing=Math.max(-.6,Math.min(.6,hairSwing+hairVel*dt))}
  ctx.save();ctx.translate(240+(fall?20:0),base+2);ctx.scale(fall?1.5:1,1);ctx.beginPath();ctx.ellipse(0,0,75-height*.25,12-height*.015,0,0,TAU);ctx.fillStyle='#183e3c32';ctx.fill();ctx.restore();
  const phase=mode==='playing'?stateEngine.phase:mode==='countdown'?Math.PI*.9:fall?TAU:animTime*1.8;
  const poseRope=()=>{ctx.save();ctx.translate(240+offsetX,base-height);ctx.rotate(rotation);ctx.scale(sx,sy);ctx.translate(-240,-base+height);drawRope(phase,base,height);ctx.restore()};
@@ -209,6 +244,7 @@ function frame(now){
  }
  if(!hiddenPause){paused=false;show('pauseLayer',false)}
  if(hiddenPause){paused=true;show('pauseLayer');}
+ {const live=['countdown','playing','win'].includes(mode)&&!paused&&!document.hidden;if(live&&!music.on)musicStart();else if(!live&&music.on&&mode!=='result'&&mode!=='falling')musicStop(.3)}
  if(mode==='countdown'&&!paused){countdownAge+=dt;const n=countdownAge<3?String(3-Math.floor(countdownAge)):'GO!';if(n!==lastCount){lastCount=n;$('countdown').textContent=n;$('countdown').classList.remove('pop');void $('countdown').offsetWidth;$('countdown').classList.add('pop');sound(n==='GO!'?'go':'count')}if(countdownAge>3.55){stateEngine.start();setMode('playing');}}
  updateVoice(now);
  if(mode==='playing'&&!paused){stateEngine.step(dt);$('time').innerHTML=(DURATION-stateEngine.time).toFixed(1)+'<span>s</span>';$('score').textContent=stateEngine.jumps;}
@@ -231,7 +267,7 @@ function makeSprite(img){
  g.putImageData(pixels,0,0);return c;
 }
 function loadImage(path){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Could not load '+path));img.src=path})}
-const assetsReady=Promise.all([loadImage('./assets/court.png'),...BODIES.map(b=>loadImage(b.src))]).then(([a,...bs])=>{court=a;bs.forEach((img,i)=>{BODIES[i].img=makeSprite(img)});bodyIdx=Math.floor(Math.random()*BODIES.length);body=BODIES[bodyIdx].img;artReady=true;return true}).catch(error=>{setMode('setup');cameraError('The court couldn’t load','Check your connection and reload the page.');$('retryCamera').textContent='Reload game';$('retryCamera').onclick=()=>location.reload();throw error});
+const assetsReady=Promise.all([loadImage('./assets/court.png'),...BODIES.map(b=>loadImage(b.src)),...hairImages().map(h=>loadImage(h.cap||h.src))]).then(([a,...rest])=>{court=a;const bs=rest.slice(0,BODIES.length),hs=rest.slice(BODIES.length);bs.forEach((img,i)=>{BODIES[i].img=makeSprite(img)});hairImages().forEach((h,i)=>{h.img=hs[i]});bodyIdx=Math.floor(Math.random()*BODIES.length);body=BODIES[bodyIdx].img;artReady=true;return true}).catch(error=>{setMode('setup');cameraError('The court couldn’t load','Check your connection and reload the page.');$('retryCamera').textContent='Reload game';$('retryCamera').onclick=()=>location.reload();throw error});
 assetsReady.catch(()=>{});
 $('start').onclick=()=>void startCamera();$('practice').onclick=()=>void startPractice();$('cancelSetup').onclick=()=>void startPractice();$('retryCamera').onclick=()=>void startCamera();
 $('jump').onclick=jump;
