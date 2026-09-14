@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ah &amp; Jump — Asset library</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23ffe052'/%3E%3Ctext x='20' y='29' text-anchor='middle' font-size='30'%3E!%3C/text%3E%3C/svg%3E" />
+<style>
+  :root { --bg:#142c29; --card:#fffdf0; --ink:#234436; --dim:#5f7a70; --line:rgba(35,68,54,.14); --yellow:#ffe052; --pink:#ee9cd2; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--card); font-family: -apple-system, "Helvetica Neue", Inter, system-ui, sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 48px 24px 96px; }
+  .k { font-size: 11px; letter-spacing: .28em; text-transform: uppercase; color: rgba(255,253,240,.5); }
+  h1 { font-size: 40px; margin: 10px 0 8px; letter-spacing: -.01em; }
+  .lede { color: rgba(255,253,240,.7); margin: 0 0 22px; }
+  .btn { display:inline-block; background:var(--yellow); color:var(--ink); font-weight:700; text-decoration:none; padding: 12px 20px; border-radius: 12px; }
+  .btn.ghost { background: rgba(255,253,240,.1); color: var(--card); font-weight: 500; }
+  nav { display:flex; gap:10px; flex-wrap:wrap; margin: 26px 0 40px; }
+  nav a { color: rgba(255,253,240,.75); text-decoration:none; font-size:14px; padding:6px 12px; border:1px solid rgba(255,253,240,.18); border-radius:999px; }
+  section { margin-top: 44px; }
+  h2 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: rgba(255,253,240,.6); font-size: 14px; margin: 0 0 16px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .card { background: var(--card); color: var(--ink); border-radius: 18px; padding: 18px; }
+  .card .pv { border-radius: 12px; overflow:hidden; background: repeating-conic-gradient(#e6e3d6 0 25%, #f4f2e8 0 50%) 0 0/20px 20px; aspect-ratio: 1; display:flex; align-items:center; justify-content:center; }
+  .card .pv.tall { aspect-ratio: 9/16; }
+  .card .pv img { max-width: 100%; max-height: 100%; display:block; }
+  .card b { display:block; margin: 12px 0 2px; font-size: 16px; }
+  .card p { margin: 0; font-size: 13px; color: var(--dim); line-height: 1.5; }
+  .card .row { display:flex; gap:8px; margin-top: 12px; flex-wrap: wrap; }
+  .card .row a { font-size: 13px; color: var(--ink); text-decoration:none; border:1px solid var(--line); border-radius: 999px; padding: 6px 12px; }
+  .faces { display:flex; gap:14px; }
+  .face { flex:1; background: var(--card); color: var(--ink); border-radius: 18px; padding: 18px; text-align:center; }
+  .face span { font-size: 64px; display:block; line-height: 1.2; }
+  .face b { display:block; margin-top: 8px; }
+  .face p { margin: 2px 0 0; font-size: 13px; color: var(--dim); }
+  .swatches { display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 10px; }
+  .sw { border-radius: 14px; padding: 14px 12px; color: #111; font-size: 12px; font-family: ui-monospace, Menlo, monospace; }
+  .sw.dark { color: #fffdf0; }
+  .rope { background: var(--card); border-radius: 18px; padding: 18px; color: var(--ink); }
+  .rope svg { width: 100%; height: 90px; display:block; }
+  table { width:100%; border-collapse: collapse; background: var(--card); color: var(--ink); border-radius: 18px; overflow:hidden; font-size: 14px; }
+  th, td { text-align:left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { width: 180px; color: var(--dim); font-weight: 600; }
+  tr:last-child td, tr:last-child th { border-bottom: 0; }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; }
+  footer { margin-top: 56px; font-size: 13px; color: rgba(255,253,240,.45); }
+  footer a { color: rgba(255,253,240,.7); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="k">Team handoff / Kit 01</div>
+  <h1>Asset library.</h1>
+  <p class="lede">Everything Ah &amp; Jump draws with. Two images, one drawn rope, a palette, and the rules behind the voice input.</p>
+  <a class="btn" href="./ah-and-jump-assets.zip" download>Download kit (zip) ↓</a>
+  <a class="btn ghost" href="../" style="margin-left:8px">Play the game ↗</a>
+  <nav><a href="#characters">Character</a><a href="#background">Background</a><a href="#rope">Rope</a><a href="#palette">Palette</a><a href="#rules">Rules &amp; voice</a></nav>
+
+  <section id="characters">
+    <h2>Character</h2>
+    <p class="sub">One body, the player's own face on top.</p>
+    <div class="grid">
+      <div class="card">
+        <div class="pv"><img src="./files/body.png" alt="Body" /></div>
+        <b>body.png</b>
+        <p>1254 × 1254, transparent. Headless body holding both rope handles. The face is cropped live from the camera and drawn at the neck, 142 px tall on an 840 px canvas, with a 16 px cream outline (<code>#fffdf2</code>).</p>
+        <div class="row"><a href="./files/body.png" download>PNG ↓</a></div>
+      </div>
+      <div class="card">
+        <div class="faces" style="flex-direction:column">
+          <div class="face" style="padding:0"><span>😎</span><b>Idle &amp; jumping</b><p>Fallback when no face is captured.</p></div>
+          <div class="face" style="padding:0;margin-top:14px"><span>😵‍💫</span><b>Fall &amp; result</b><p>Shown on a faceplant.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="background">
+    <h2>Background</h2>
+    <p class="sub">Vertical court, drawn behind the canvas.</p>
+    <div class="grid">
+      <div class="card" style="max-width:320px">
+        <div class="pv tall"><img src="./files/court.png" alt="Court" /></div>
+        <b>court.png</b>
+        <p>941 × 1672. Green court, blue sky, tree shadows. Ground line sits 60 px above the canvas bottom.</p>
+        <div class="row"><a href="./files/court.png" download>PNG ↓</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rope">
+    <h2>Rope</h2>
+    <p class="sub">Not an image. Three strokes on canvas, drawn every frame.</p>
+    <div class="rope">
+      <svg viewBox="0 0 600 90" fill="none" stroke-linecap="round"><path d="M20 20 C 150 100, 450 100, 580 20" stroke="#263c47" stroke-width="7"/><path d="M20 20 C 150 100, 450 100, 580 20" stroke="#ee9cd2" stroke-width="4.8"/><path d="M20 20 C 150 100, 450 100, 580 20" stroke="#ffd9f2" stroke-width="1.2"/></svg>
+      <p style="margin:10px 0 0;font-size:13px;color:var(--dim)">Outline <code>#263c47</code> 7 px · body <code>#ee9cd2</code> 4.8 px · highlight <code>#ffd9f2</code> 1.2 px. On a fall the body turns <code>#ff777d</code>. Fall extras: four spinning stars in <code>#ffe052</code> and a "BONK!" in Impact italic 55 px.</p>
+    </div>
+  </section>
+
+  <section id="palette">
+    <h2>Palette</h2>
+    <p class="sub">Used by the UI, confetti and rope.</p>
+    <div class="swatches">
+      <div class="sw dark" style="background:#142c29">#142c29<br />background</div>
+      <div class="sw" style="background:#ffe052">#ffe052<br />yellow · CTA, stars</div>
+      <div class="sw" style="background:#ff716f">#ff716f<br />coral · confetti</div>
+      <div class="sw" style="background:#9b88ff">#9b88ff<br />purple · confetti</div>
+      <div class="sw" style="background:#fffdf0">#fffdf0<br />cream · cards, outline</div>
+      <div class="sw" style="background:#4ec9b0">#4ec9b0<br />teal · confetti</div>
+      <div class="sw" style="background:#ee9cd2">#ee9cd2<br />pink · rope</div>
+      <div class="sw dark" style="background:#234436">#234436<br />ink · text</div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <h2>Rules &amp; voice</h2>
+    <p class="sub">How a sound becomes a jump.</p>
+    <table>
+      <tr><th>Round</th><td>15 seconds. One short "ah", one jump. Stay on your feet to win.</td></tr>
+      <tr><th>Voice input</th><td>Volume-onset detection, not speech recognition. Any short sound works. Threshold auto-calibrates from the room's noise floor, clamped between 0.004 and 0.08.</td></tr>
+      <tr><th>Timing</th><td>Rearms after 130 ms of quiet. At least 250 ms between two jumps.</td></tr>
+      <tr><th>Poses</th><td>Four jump poses (tuck, twist, squash, spin), picked at random, never the same twice in a row. Height and airtime stay the same.</td></tr>
+      <tr><th>Sound</th><td>Synthesized with WebAudio: jump, land, countdown, go, fall, win. No audio files.</td></tr>
+      <tr><th>Face capture</th><td>MediaPipe Face Landmarker, on device. The face oval is clipped from the selfie once, then reused as a sprite.</td></tr>
+      <tr><th>Tap practice</th><td>No camera or mic. Tap to jump, emoji face.</td></tr>
+    </table>
+  </section>
+
+  <footer>Ah &amp; Jump · <a href="../">play</a> · <a href="https://github.com/Belendali/ah-and-jump">source on GitHub</a></footer>
+</div>
+</body>
+</html>
