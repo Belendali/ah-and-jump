@@ -13,3 +13,5 @@
 .result-panel:not(.win) h2{color:#ff9a8d}
 .replay{pointer-events:auto;border:0;border-radius:999px;padding:13px 34px;background:#ffe052;color:#193831;font-size:17px;font-weight:800;box-shadow:0 6px 18px #0004}
 .replay:active{transform:scale(.96)}
+
+.gimg{display:block;width:120px;height:120px;margin:-4px auto 2px;filter:invert(1) brightness(.18)}
