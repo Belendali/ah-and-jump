@@ -157,7 +157,7 @@ function updateVoice(now){
  if(mode==='miccheck')$('micLevel').style.transform=`scaleX(${Math.min(1,level/voiceGate.threshold)})`;
  if(now<ignoreMicUntil)return;
  const onset=voiceGate.update(level,now);
- if(onset&&mode==='miccheck'){launchNow();return;}
+ if(onset&&mode==='miccheck'){launchCountdown();return;}
  if(onset&&mode==='playing'&&!paused)jump();
 }
 function drawRope(phase,base,jumpY,fall=0){
