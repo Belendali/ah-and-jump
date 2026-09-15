@@ -197,7 +197,7 @@ function drawPlaceholderFace(dizzy){
 }
 function star(x,y,r,rotation,color='#ffe052'){ctx.save();ctx.translate(x,y);ctx.rotate(rotation);ctx.beginPath();for(let i=0;i<10;i++){const a=i*Math.PI/5-Math.PI/2,s=i%2?r*.46:r;i?ctx.lineTo(Math.cos(a)*s,Math.sin(a)*s):ctx.moveTo(Math.cos(a)*s,Math.sin(a)*s)}ctx.closePath();ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#234436';ctx.lineWidth=2;ctx.stroke();ctx.restore()}
 function drawScene(dt){
- ctx.clearRect(0,0,W,H);if(!artReady)return;
+ ctx.clearRect(0,0,W,H);if(!artReady||mode==='idle')return; // the permission card sits on an empty court
  const isIntro=mode==='idle'||mode==='setup';const base=GROUND;
  // Keep the camera unobstructed above a compact foreground play area.
  ctx.save();ctx.translate(W/2,base);ctx.scale(.78,.78);ctx.translate(-W/2,-base);
