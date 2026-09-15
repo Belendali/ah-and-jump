@@ -15,3 +15,21 @@
 .replay:active{transform:scale(.96)}
 
 .gimg{display:block;width:120px;height:120px;margin:-4px auto 2px;filter:invert(1) brightness(.18)}
+
+/* template shared with the other games (main page only, the live variant keeps its old look) */
+.tpl .start-panel{left:0;right:0;top:0;bottom:0;padding:24px;display:flex;align-items:center;justify-content:center;background:rgba(10,26,23,.42);border-radius:0;box-shadow:none}
+.tpl .start-panel .gate{width:100%;max-width:360px;padding:26px 22px 18px;background:#fffdf2;border-radius:22px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.tpl .start-panel .gate svg{display:block;margin:0 auto 8px}
+.tpl .start-panel h2{font-size:26px;letter-spacing:-.6px;margin:4px 0 6px;color:#193831}
+.tpl .start-panel p{font-size:15px;margin:0 0 16px;color:#52675e}
+.tpl .mic-check{inset:0;top:0;left:0;right:0;padding:0 28px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:18%;border-radius:0;text-align:center;color:#fff;background:rgba(12,30,26,.28);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.tpl .mic-check[hidden]{display:none}
+.tpl .mic-check .gimg{width:210px;height:210px;margin:0 0 4px;filter:drop-shadow(0 2px 10px rgba(0,0,0,.45))}
+.tpl .mic-check h2{font-size:22px;margin:0 0 6px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+.tpl .mic-check p{font-size:14px;margin:0;color:rgba(255,255,255,.85)}
+.tpl .mic-check .cta{display:block;margin-top:16px;font-style:normal;font-size:15px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ffe052;animation:ctapulse 1.2s ease-in-out infinite}
+@keyframes ctapulse{0%,100%{opacity:.55}50%{opacity:1}}
+.tpl .mic-check .mic-meter{width:140px;height:4px;margin:14px auto 0;background:rgba(255,255,255,.22)}
+.tpl .mic-check .mic-meter>div{background:#ffe052}
+.tpl .mic-check .primary{width:auto;margin-top:16px;padding:10px 20px;font-size:15px}
+.tpl .mic-check .text-button{color:rgba(255,255,255,.7);font-size:12px;margin-top:14px}

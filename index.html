@@ -5,16 +5,26 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23ffe052'/%3E%3Ctext x='20' y='29' text-anchor='middle' font-size='30'%3E!%3C/text%3E%3C/svg%3E">
 <script>(function(){var t=Math.floor(Date.now()/6e4);var l=document.createElement("link");l.rel="stylesheet";l.href="./style.css?t="+t;document.head.appendChild(l);window.__t=t})()</script>
 </head>
-<body><main class="shell" id="voice-app"><section class="phone" id="phone" aria-label="Ah and Jump game">
+<body><main class="shell tpl" id="voice-app"><section class="phone" id="phone" aria-label="Ah and Jump game">
 <div class="camera-tile" id="cameraTile" hidden><video id="camera" autoplay playsinline muted></video></div>
 <canvas id="scene" width="480" height="840" aria-label="Jump rope game animation"></canvas>
 <div class="hud" id="hud" hidden><div class="stat"><span>TIME LEFT</span><strong id="time">15.0<span>s</span></strong></div><div class="stat jumps"><span>JUMPS</span><strong id="score">0</strong></div></div>
 <div class="countdown" id="countdown" aria-live="assertive" hidden></div>
 <div class="pause-layer" id="pauseLayer" hidden><strong>Game paused</strong><p id="pauseReason"></p><button id="resume" hidden>Resume</button></div>
 <div id="captureFlash" class="capture-flash"></div>
-<div class="start-panel" id="startPanel"><img class="gimg" src="./assets/guide/ah.webp" alt="" /><h1>Say “ah” to jump.</h1><p>One short “ah”, one jump.<br>Stay on your feet for 15 seconds.</p><button class="primary" id="start">Let’s play</button><span class="privacy">Allow camera + mic. Everything stays on your device.</span><button class="text-button" id="practice">Try tap practice</button></div>
+<div class="start-panel" id="startPanel"><div class="gate">
+<svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="#193831" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="12" width="28" height="24" rx="5"/><path d="M32 20l8-5v18l-8-5"/><circle cx="18" cy="24" r="5.5"/></svg>
+<h2>Allow camera &amp; mic</h2><p>Everything stays on your phone.</p>
+<button class="primary" id="start">Open camera</button><button class="text-button" id="practice">No camera? Tap practice</button>
+</div></div>
 <div class="setup-panel" id="setupPanel" hidden><div class="spinner" id="spinner"></div><h2 id="setupTitle">Camera + microphone</h2><p id="setupText">Hold still and stay quiet for a moment.</p><button class="primary" id="setupMic" hidden>Enable microphone</button><button class="primary" id="retryCamera" hidden>Try again</button><button class="text-button" id="cancelSetup">Try tap practice</button></div>
-<div class="mic-check" id="micCheck" hidden><img class="gimg" src="./assets/guide/ah.webp" alt="" /><h2>Say “ah” to start.</h2><p>One short sound. No need to shout.</p><div class="mic-meter" aria-label="Microphone level"><div id="micLevel"></div></div><button class="primary" id="enableMic" hidden>Enable microphone</button><button class="text-button" id="retryMic">Mic not responding? Try again</button></div>
+<div class="mic-check" id="micCheck" hidden>
+<img class="gimg" src="./assets/guide/ah.webp" alt="" />
+<h2>Say “ah” to jump</h2><p>One short sound, one jump.</p>
+<em class="cta">Say “ah” to start</em>
+<div class="mic-meter" aria-label="Microphone level"><div id="micLevel"></div></div>
+<button class="primary" id="enableMic" hidden>Enable microphone</button><button class="text-button" id="retryMic">Mic not responding? Try again</button>
+</div>
 <div class="play-controls" id="playControls" hidden><button class="jump-button" id="jump">Tap to jump · Space</button></div>
 <div class="result-panel" id="resultPanel" hidden role="status"><h2 id="resultTitle">Congrats</h2><button class="replay" id="replay">Replay</button></div>
 </section></main><script>(function(){var s=document.createElement("script");s.type="module";s.src="./app.mjs?t="+window.__t;document.body.appendChild(s)})()</script></body></html>

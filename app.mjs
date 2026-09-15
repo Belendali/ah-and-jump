@@ -94,6 +94,7 @@ function snapshot(){return{mode,control:practice?'space_or_tap':'voice',timeSurv
 function launchCountdown(){
  clearTimeout(roundTimer);paused=false;hiddenPause=false;show('pauseLayer',false);stateEngine.reset();voiceGate.reset();countdownAge=0;lastCount='';particles=[];pickBody();setMode('countdown');$('time').innerHTML=DURATION.toFixed(1)+'<span>s</span>';$('score').textContent='0';
 }
+function launchNow(){launchCountdown();countdownAge=3;} // camera flow: the "ah" is the start button, straight to GO!
 function jump(){if(mode!=='playing'||paused)return false;return stateEngine.jump()}
 function finish(){const won=stateEngine.state==='won';setMode('result');$('resultPanel').classList.toggle('win',won);$('resultTitle').textContent=won?'Congrats':'You lose';musicStop(.4);stinger(won?'great':'bad',.9,.1);}
 function stopCamera(){cameraAttempt++;micSource?.disconnect();analyser?.disconnect();micSink?.disconnect();micSink=null;micSource=null;analyser=null;micSamples=null;micCalibrated=false;noiseLevels=[];stream?.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;show('cameraTile',false);lastVideoTime=-1;faceStableAt=0;}
@@ -156,7 +157,7 @@ function updateVoice(now){
  if(mode==='miccheck')$('micLevel').style.transform=`scaleX(${Math.min(1,level/voiceGate.threshold)})`;
  if(now<ignoreMicUntil)return;
  const onset=voiceGate.update(level,now);
- if(onset&&mode==='miccheck'){launchCountdown();return;}
+ if(onset&&mode==='miccheck'){launchNow();return;}
  if(onset&&mode==='playing'&&!paused)jump();
 }
 function drawRope(phase,base,jumpY,fall=0){
@@ -273,7 +274,7 @@ $('start').onclick=()=>void startCamera();$('practice').onclick=()=>void startPr
 $('jump').onclick=jump;
 $('enableMic').onclick=$('setupMic').onclick=()=>{activateAudio();voiceGate.reset()};
 $('retryMic').onclick=()=>void startCamera();
-$('replay').onclick=()=>{activateAudio();launchCountdown()};
+$('replay').onclick=()=>{activateAudio();if(practice||!stream)launchCountdown();else{voiceGate.reset();setMode('miccheck');}};
 $('resume').onclick=async()=>{activateAudio();if(!practice&&(!stream?.getAudioTracks().some(t=>t.readyState==='live')||detectionErrors>6)){void startCamera();return}try{await audioContext?.resume();if(!practice&&(audioContext?.state!=='running'||stream.getAudioTracks()[0].muted))return;hiddenPause=false;paused=false;show('pauseLayer',false);voiceGate.reset()}catch{}};
 window.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat&&practice&&mode==='playing'&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();jump()}});
 canvas.addEventListener('pointerdown',()=>{if(practice)jump()});
@@ -286,3 +287,4 @@ if(document.modelContext?.registerTool){const lifecycle=new AbortController();co
  window.addEventListener('pagehide',()=>lifecycle.abort(),{once:true});
 }
 requestAnimationFrame(frame);
+if(new URLSearchParams(location.search).has('debug'))window.__jump={setMode,launchNow,get mode(){return mode},set practice(v){practice=v},get paused(){return paused}}; // test hook, debug only
