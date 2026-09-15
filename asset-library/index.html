@@ -55,7 +55,8 @@
   <p class="lede">Everything Ah &amp; Jump draws with. Two images, one drawn rope, a palette, and the rules behind the voice input.</p>
   <a class="btn" href="./ah-and-jump-assets.zip" download>Download kit (zip) ↓</a>
   <a class="btn ghost" href="../" style="margin-left:8px">Play the game ↗</a>
-  <nav><a href="#characters">Character</a><a href="#background">Background</a><a href="#rope">Rope</a><a href="#palette">Palette</a><a href="#rules">Rules &amp; voice</a></nav>
+  <a class="btn ghost" href="https://github.com/Belendali/ah-and-jump" style="margin-left:8px">GitHub ↗</a>
+  <nav><a href="#characters">Character</a><a href="#hair">Hair</a><a href="#guide">Guide</a><a href="#background">Background</a><a href="#rope">Rope</a><a href="#palette">Palette</a><a href="#rules">Rules &amp; voice</a></nav>
 
   <section id="characters">
     <h2>Character</h2>
@@ -81,28 +82,68 @@
       </div>
       <div class="card">
         <div class="faces" style="flex-direction:column">
-          <div class="face" style="padding:0"><span><svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><circle cx="32" cy="32" r="24" fill="rgba(255,255,255,.25)"/><circle cx="23" cy="27" r="2.4" fill="#fff" stroke="none"/><circle cx="41" cy="27" r="2.4" fill="#fff" stroke="none"/><path d="M21 38c3 5 19 5 22 0"/></svg></span><b>Idle &amp; jumping</b><p>Drawn in code: a blurred disc with a white line smiley, meaning "your face goes here".</p></div>
-          <div class="face" style="padding:0;margin-top:14px"><span><svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><circle cx="32" cy="32" r="24" fill="rgba(255,255,255,.25)"/><path d="M19 23l8 8M27 23l-8 8M37 23l8 8M45 23l-8 8"/><circle cx="32" cy="42" r="4"/></svg></span><b>Fall &amp; result</b><p>Same disc with crossed eyes on a faceplant.</p></div>
+          <div class="face" style="padding:0"><span><svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#234436" stroke-width="3" stroke-linecap="round"><circle cx="32" cy="32" r="24" fill="rgba(35,68,54,.08)"/><circle cx="23" cy="27" r="2.4" fill="#234436" stroke="none"/><circle cx="41" cy="27" r="2.4" fill="#234436" stroke="none"/><path d="M21 38c3 5 19 5 22 0"/></svg></span><b>Idle &amp; jumping</b><p>Drawn in code: a blurred disc with a white line smiley, meaning "your face goes here".</p></div>
+          <div class="face" style="padding:0;margin-top:14px"><span><svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#234436" stroke-width="3" stroke-linecap="round"><circle cx="32" cy="32" r="24" fill="rgba(35,68,54,.08)"/><path d="M19 23l8 8M27 23l-8 8M37 23l8 8M45 23l-8 8"/><circle cx="32" cy="42" r="4"/></svg></span><b>Fall &amp; result</b><p>Same disc with crossed eyes on a faceplant.</p></div>
         </div>
       </div>
     </div>
-    <h2 style="margin-top:28px">Hair</h2>
-    <p class="sub">Two hairstyles on the same head template, drawn behind the face. Each is split into a still cap and swinging parts that pivot where they leave the head. A spring driven by the jump's vertical speed swings them: rising pulls them down, falling flings them up.</p>
+    <h2 id="hair" style="margin-top:44px">Hair</h2>
+    <p class="sub">Two hairstyles on the same head template, drawn behind the face. Each is split into a still cap and swinging parts that pivot where they leave the head. A spring driven by the jump's vertical speed swings them: rising pulls them down, falling flings them up. All pieces share one 640 px frame, so they stack without offsets.</p>
     <div class="grid">
       <div class="card">
-        <div class="pv"><img src="./files/hair/braids-cap.png" alt="Braids cap" /></div>
-        <b>braids-cap.png · braid-left.png · braid-right.png</b>
-        <p>Body 1 (pink). Cap stays put, the two braids pivot at ear level (±0.32 rad up, −0.6 rad down) and hang a little at rest.</p>
-        <div class="row"><a href="./files/hair/braids-cap.png" download>Cap ↓</a><a href="./files/hair/braid-left.png" download>Left ↓</a><a href="./files/hair/braid-right.png" download>Right ↓</a></div>
+        <div class="pv"><img src="./files/hair/braids-full.png" alt="braids-full.png" loading="lazy" /></div>
+        <b>braids-full.png</b>
+        <p>Body 1 (pink): the twin braids assembled, for reference.</p>
+        <div class="row"><a href="./files/hair/braids-full.png" download>PNG ↓</a></div>
       </div>
       <div class="card">
-        <div class="pv"><img src="./files/hair/pony-tail.png" alt="Ponytail" /></div>
-        <b>pony-cap.png · pony-tail.png</b>
-        <p>Body 2 (orange). Bangs stay put, the tail pivots at the crown and swings on the same spring, a little softer.</p>
-        <div class="row"><a href="./files/hair/pony-cap.png" download>Cap ↓</a><a href="./files/hair/pony-tail.png" download>Tail ↓</a></div>
+        <div class="pv"><img src="./files/hair/braids-cap.png" alt="braids-cap.png" loading="lazy" /></div>
+        <b>braids-cap.png</b>
+        <p>Still part: crown and fringe, behind the face.</p>
+        <div class="row"><a href="./files/hair/braids-cap.png" download>PNG ↓</a></div>
       </div>
       <div class="card">
-        <p style="margin:0"><b>Placement</b><br>All pieces share one 640 px frame (source 1254 px, scale 0.36 onto the 142 px face). Head centre at (627, 330) in the source lands 46 px above the neck. Braid pivots (425, 370) and (830, 370); ponytail pivot (600, 110).</p>
+        <div class="pv"><img src="./files/hair/braid-left.png" alt="braid-left.png" loading="lazy" /></div>
+        <b>braid-left.png</b>
+        <p>Swings from the left ear, pivot (425, 370) in the 1254 px source. Up to 0.32 rad up and 0.6 rad down, hangs a little at rest.</p>
+        <div class="row"><a href="./files/hair/braid-left.png" download>PNG ↓</a></div>
+      </div>
+      <div class="card">
+        <div class="pv"><img src="./files/hair/braid-right.png" alt="braid-right.png" loading="lazy" /></div>
+        <b>braid-right.png</b>
+        <p>Mirror of the left braid, pivot (830, 370).</p>
+        <div class="row"><a href="./files/hair/braid-right.png" download>PNG ↓</a></div>
+      </div>
+      <div class="card">
+        <div class="pv"><img src="./files/hair/pony-full.png" alt="pony-full.png" loading="lazy" /></div>
+        <b>pony-full.png</b>
+        <p>Body 2 (orange): the ponytail assembled, for reference.</p>
+        <div class="row"><a href="./files/hair/pony-full.png" download>PNG ↓</a></div>
+      </div>
+      <div class="card">
+        <div class="pv"><img src="./files/hair/pony-cap.png" alt="pony-cap.png" loading="lazy" /></div>
+        <b>pony-cap.png</b>
+        <p>Still part: the bangs.</p>
+        <div class="row"><a href="./files/hair/pony-cap.png" download>PNG ↓</a></div>
+      </div>
+      <div class="card">
+        <div class="pv"><img src="./files/hair/pony-tail.png" alt="pony-tail.png" loading="lazy" /></div>
+        <b>pony-tail.png</b>
+        <p>Swings from the crown, pivot (600, 110), on the same spring, a little softer.</p>
+        <div class="row"><a href="./files/hair/pony-tail.png" download>PNG ↓</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="guide">
+    <h2>Guide</h2>
+    <p class="sub">A white line-art character saying “ah”, on a light frosted scrim over the court after the selfie. It loops above “Say “ah” to start”; one short sound starts a 3-2-1 count-in. The same line style guides all four games.</p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
+      <div class="card">
+        <div class="pv" style="background:#31574f"><img src="./files/guide/ah.webp" alt="ah.webp" loading="lazy" /></div>
+        <b>ah.webp</b>
+        <p>320 × 320 animated WebP, transparent, 60 frames over 3.6 s.</p>
+        <div class="row"><a href="./files/guide/ah.webp" download>WEBP ↓</a></div>
       </div>
     </div>
   </section>
@@ -155,6 +196,7 @@
       <tr><th>Sound</th><td>Jump, land, countdown, go, fall and win are synthesized with WebAudio. The result stingers are shared with the salon game: <a href="./files/audio/ending-great.mp3" download>ending-great.mp3</a> on a win, <a href="./files/audio/ending-bad.mp3" download>ending-bad.mp3</a> on a faceplant.</td></tr>
       <tr><th>Music</th><td>Synthesized bed at 126 bpm, four bars of F / C / Dm / Bb: soft kick, hats, clap, bouncy bass and plucked stabs. Runs from the countdown to the result, fades on a fall. Kept quiet (9% with the mic, 16% in practice) so it sits under the voice instead of over it.</td></tr>
       <tr><th>Face capture</th><td>MediaPipe Face Landmarker, on device. The face oval is clipped from the selfie once, then reused as a sprite.</td></tr>
+      <tr><th>Flow</th><td>Camera and mic card → automatic selfie → guide on a frosted scrim → one “ah” starts a 3-2-1 → 15 s → “Congrats” or “You lose” with a Replay button. Replay goes back to the guide.</td></tr>
       <tr><th>Tap practice</th><td>No camera or mic. Tap to jump, line-smiley placeholder face.</td></tr>
     </table>
   </section>

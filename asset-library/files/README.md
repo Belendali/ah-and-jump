@@ -9,3 +9,5 @@
 - Music: synthesized bed, 126 bpm, F / C / Dm / Bb, kick + hats + clap + bass + plucks, from countdown to result, fades on a fall. Gain 0.09 with the mic, 0.16 in practice.
 - Voice: volume-onset gate, not speech recognition. Threshold auto-calibrated between 0.004 and 0.08; rearms after 130 ms of quiet; minimum 250 ms between jumps.
 - Round: 15 s. One "ah", one jump. Four jump poses picked at random (poses.mjs).
+- guide/ah.webp  320×320 animated WebP (60 frames, 3.6 s): the white line-art “ah” guide shown on a frosted scrim before the round.
+- hair/braids-full.png, hair/pony-full.png  the assembled hairstyles, for reference.
