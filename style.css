@@ -33,3 +33,6 @@
 .tpl .mic-check .mic-meter>div{background:#ffe052}
 .tpl .mic-check .primary{width:auto;margin-top:16px;padding:10px 20px;font-size:15px}
 .tpl .mic-check .text-button{color:rgba(255,255,255,.7);font-size:12px;margin-top:14px}
+/* TikTok Effect safe zones (390×694): web-only practice button and HUD inside the core zone */
+.tpl .play-controls{bottom:23.5%}
+.tpl .hud{top:12.5%;left:17%;right:17%}

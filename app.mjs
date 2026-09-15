@@ -4,7 +4,7 @@ import {VoiceGate} from './voice.mjs';
 const $=id=>document.getElementById(id);
 const canvas=$('scene'),ctx=canvas.getContext('2d'),video=$('camera');
 const W=480,voiceGate=new VoiceGate();
-let H=840,GROUND=780;
+let H=840,GROUND=571; // ground at 68% of the height so the jumper stays inside TikTok's core zone (y ≤ 533/694)
 // Safari changes its visible height while opening the camera / browser bars.
 // Size the fixed mobile surface to that viewport, never to document content.
 function syncViewport(){
@@ -26,7 +26,7 @@ window.addEventListener('pageshow',syncViewport);
 new ResizeObserver(([entry])=>{
  const {width,height}=entry.contentRect;
  if(!width||!height)return;
- H=Math.round(W*height/width);GROUND=H-60;canvas.height=H;
+ H=Math.round(W*height/width);GROUND=Math.round(H*.68);canvas.height=H;
 }).observe($('phone'));
 let mode='idle',practice=false,face=null,landmarker=null,stream=null,muted=false,audioContext=null;
 let ignoreMicUntil=0;
@@ -288,3 +288,5 @@ if(document.modelContext?.registerTool){const lifecycle=new AbortController();co
 }
 requestAnimationFrame(frame);
 if(new URLSearchParams(location.search).has('debug'))window.__jump={setMode,launchNow,get mode(){return mode},set practice(v){practice=v},get paused(){return paused}}; // test hook, debug only
+// ?zones draws TikTok Effect safe zones (390×694 effect canvas) over the game, same as the other games
+if(new URLSearchParams(location.search).has('zones')){const zs=document.createElement('style');zs.textContent='.tt-zones{position:absolute;inset:0;z-index:60;pointer-events:none;font:700 10px system-ui}.tt-zones i{position:absolute;box-sizing:border-box}.tt-zones .clip{left:0;top:0;bottom:0;width:4.87%;background:rgba(255,0,80,.18)}.tt-zones .clip.r{left:auto;right:0}.tt-zones .vis{left:4.87%;top:11.96%;width:90.26%;height:37.18%;border:1.5px dashed #4ec9b0}.tt-zones .core2{left:16.67%;top:11.96%;width:66.67%;height:66.57%;border:1.5px dashed #4ec9b0}.tt-zones .core{left:16.67%;top:11.82%;width:66.67%;height:64.99%;border:2px solid #ffe052}.tt-zones .core b{position:absolute;left:3px;bottom:100%;margin-bottom:3px;color:#ffe052}.tt-zones em{position:absolute;font-style:normal}.tt-zones .vl{left:5.6%;top:49.6%;color:#4ec9b0}.tt-zones .cl{left:2px;bottom:6px;color:#ff5c8a}';document.head.append(zs);const zo=document.createElement('div');zo.className='tt-zones';zo.innerHTML='<i class="clip"></i><i class="clip r"></i><i class="vis"></i><i class="core2"></i><i class="core"><b>CORE 260×451</b></i><em class="vl">VISUAL</em><em class="cl">CLIP</em>';document.querySelector('#phone').append(zo);}
