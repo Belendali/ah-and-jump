@@ -4,7 +4,9 @@ import {VoiceGate} from './voice.mjs';
 const $=id=>document.getElementById(id);
 const canvas=$('scene'),ctx=canvas.getContext('2d'),video=$('camera');
 const W=480,voiceGate=new VoiceGate();
-let H=840,GROUND=571; // ground at 68% of the height so the jumper stays inside TikTok's core zone (y ≤ 533/694)
+// ?zones is the TikTok safe-zone build: ground at 68% so the jumper stays inside the core zone (y ≤ 533/694). The plain link keeps the ground at the bottom.
+const ZONES=new URLSearchParams(location.search).has('zones');if(ZONES)document.documentElement.classList.add('zones');
+let H=840,GROUND=ZONES?571:780;
 // Safari changes its visible height while opening the camera / browser bars.
 // Size the fixed mobile surface to that viewport, never to document content.
 function syncViewport(){
@@ -26,7 +28,7 @@ window.addEventListener('pageshow',syncViewport);
 new ResizeObserver(([entry])=>{
  const {width,height}=entry.contentRect;
  if(!width||!height)return;
- H=Math.round(W*height/width);GROUND=Math.round(H*.68);canvas.height=H;
+ H=Math.round(W*height/width);GROUND=ZONES?Math.round(H*.68):H-60;canvas.height=H;
 }).observe($('phone'));
 let mode='idle',practice=false,face=null,landmarker=null,stream=null,muted=false,audioContext=null;
 let ignoreMicUntil=0;
